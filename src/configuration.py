@@ -1,6 +1,20 @@
 import configparser
 
-import configparser
+
+class configfile():
+    def __init__(self, path):
+        self.path_file = path
+
+    def configfile(self):
+        config = configparser.ConfigParser()
+        config.add_section('ConfigBot')
+        config.add_section('URL')
+        config.set('URL', 'testnet_url', 'https://testnet.binance.vision/')
+        config.set('URL', 'acc_infor', 'api/v3/account')
+        config.set('URL', 'get_price', 'api/v3/ticker/price')
+        config.set('URL', 'order', 'api/v3/order/test')
+        config.set('URL', 'test_oder', '/api/v3/order/test')
+        config.set('URL', 'all_oder', 'api/v3/allOrders')
 
 #configURL
 
@@ -40,7 +54,6 @@ class BotInfo():
     binance_api_key = ""
 
     Testnet_url = ""
-
     symbol = ""
 
     delta_buy = 0
@@ -62,17 +75,14 @@ class BotConfiguration():
 
             self.bot_info.binance_secret_key = config['ConfigBot']['binance_secret_key']
             self.bot_info.binance_api_key = config['ConfigBot']['binance_api_key']
-            self.bot_info.Testnet_url = config['ConfigBot']['testnet_url']
-
             self.bot_info.symbol = config['ConfigBot']['symbol']
-
+            self.bot_info.Testnet_url = config['ConfigBot']['testnet_url']
             # load condition
             self.bot_info.delta_buy = config['CONDITION']['delta_buy']
             self.bot_info.quantity_per_buy = config['CONDITION']['quantity_per_buy']
             self.bot_info.delta_sell = config['CONDITION']['delta_sell']
             self.bot_info.quantity_per_sell = config['CONDITION']['quantity_per_sell']
             self.bot_info.profit = config['CONDITION']['profit']
-
             return self.bot_info
         except:
             pass
