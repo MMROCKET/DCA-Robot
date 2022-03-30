@@ -56,9 +56,17 @@ class BotInfo():
     Testnet_url = ""
     symbol = ""
 
-    delta_buy = 0
-    quantity_per_buy = 0
-    delta_sell = 0
+    first_buy_price = 0
+    first_buy_quantity = 0
+    
+    decrease_percent_dca = 0
+    increase_percent_dca = 0
+    multiple_amount_buy_dca = 0
+    
+    increase_profit_percent_to_sell = 0
+    decrease_profit_percent_to_sell = 0
+
+    max_amount_buy = 0
     quantity_per_sell = 0
     profit = 0
 
@@ -78,11 +86,47 @@ class BotConfiguration():
             self.bot_info.symbol = config['ConfigBot']['symbol']
             self.bot_info.Testnet_url = config['ConfigBot']['testnet_url']
             # load condition
-            self.bot_info.delta_buy = config['CONDITION']['delta_buy']
-            self.bot_info.quantity_per_buy = config['CONDITION']['quantity_per_buy']
-            self.bot_info.delta_sell = config['CONDITION']['delta_sell']
-            self.bot_info.quantity_per_sell = config['CONDITION']['quantity_per_sell']
-            self.bot_info.profit = config['CONDITION']['profit']
+            self.bot_info.decrease_percent_dca = float(config['CONDITION']['decrease_percent_dca'])
+            self.bot_info.increase_percent_dca = float(config['CONDITION']['increase_percent_dca'])
+            self.bot_info.multiple_amount_buy_dca = float(config['CONDITION']['multiple_amount_buy_dca'])
+            self.bot_info.max_amount_buy = float(config['CONDITION']['max_amount_buy'])
+            self.bot_info.increase_profit_percent_to_sell = float(config['CONDITION']['increase_profit_percent_to_sell'])
+            self.bot_info.decrease_profit_percent_to_sell = float(config['CONDITION']['decrease_profit_percent_to_sell'])
+            self.bot_info.quantity_per_sell = float(config['CONDITION']['quantity_per_sell'])
+            self.bot_info.profit = float(config['CONDITION']['profit'])
+            # load first buy
+            self.bot_info.first_buy_price = float(config['CONDITION']['first_buy_price'])
+            self.bot_info.first_buy_quantity = float(config['CONDITION']['first_buy_quantity'])
+
             return self.bot_info
         except:
             pass
+
+    def save(self):
+        try:
+            print("BotConfiguration save config")
+
+            config = configparser.ConfigParser()
+            config.read(self.path_file)
+
+            config['ConfigBot']['binance_secret_key'] = self.bot_info.binance_secret_key
+            config['ConfigBot']['binance_api_key'] = self.bot_info.binance_api_key
+            config['ConfigBot']['symbol'] = self.bot_info.symbol
+            config['ConfigBot']['testnet_url'] = self.bot_info.Testnet_url
+            config['CONDITION']['decrease_percent_dca'] = str(self.bot_info.decrease_percent_dca)
+            config['CONDITION']['increase_percent_dca'] = str(self.bot_info.increase_percent_dca)
+            config['CONDITION']['multiple_amount_buy_dca'] = str(self.bot_info.multiple_amount_buy_dca)
+            config['CONDITION']['max_amount_buy'] = str(self.bot_info.max_amount_buy)
+            config['CONDITION']['increase_profit_percent_to_sell'] = str(self.bot_info.increase_profit_percent_to_sell)
+            config['CONDITION']['decrease_profit_percent_to_sell'] = str(self.bot_info.decrease_profit_percent_to_sell)
+            config['CONDITION']['quantity_per_sell'] = str(self.bot_info.quantity_per_sell)
+            config['CONDITION']['profit'] = str(self.bot_info.profit)
+            config['CONDITION']['first_buy_price'] = str(self.bot_info.first_buy_price)
+            config['CONDITION']['first_buy_quantity'] = str(self.bot_info.first_buy_quantity)
+
+            with open(self.path_file, 'w') as configfile:
+                config.write(configfile)
+        except:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
