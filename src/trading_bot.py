@@ -1,3 +1,4 @@
+from itertools import cycle
 from time import time
 from unittest import result
 from configuration import *
@@ -5,6 +6,17 @@ from binance_api import *
 import time
 import sys
 import os
+
+
+class TradingInfo():
+    cycle = 0
+    symboy = ""
+    total_buy = 0
+    avg_price = 0
+    status = "RUNNING"
+    total = 0
+    profit = 0
+    roi = 0
 
 
 class TradingBot():
@@ -25,6 +37,9 @@ class TradingBot():
 
         self.is_first = True
         self.old_amount_buy = 0
+
+        self.cycle_num = 0
+        self.trading_dict = {}
 
     def get_time(self):
         named_tuple = time.localtime()  # get struct_time
@@ -134,6 +149,13 @@ class TradingBot():
         checking_cnt = 60
         self.dataloger = 'START TRADING BOT'
         self.dataloger_enable = True
+
+        trading_info = TradingInfo()
+        cycle_num += 1
+
+        trading_info.cycle = cycle
+        trading_info.status = "RUNNING"
+        self.trading_dict[cycle] = trading_info
         
         while True:
             URL = URLConfiguration('./config/bot_config.ini')
@@ -153,11 +175,13 @@ class TradingBot():
                 quantity = float(self.check_buy(float(price)))
                 if(float(quantity) > 0):
                     self.do_buy(getURL.test_oder, symbol, float(price), quantity)
+                    trading_info.total_buy += quantity
+                    self.trading_dict[self.cycle_num] = trading_info
                 
                 # check sell        
                 quantity = float(self.check_sell(float(price)))
                 if(float(quantity) > 0):
-                    self.do_sell(getURL.test_oder, symbol, price, quatity)
+                    self.do_sell(getURL.test_oder, symbol, price, quantity)
 
                 checking_cnt += 1
                 if(checking_cnt >= 60):
@@ -178,8 +202,11 @@ class TradingBot():
                 pass
             pass
             time.sleep(1)
+            trading_info.avg_price = self.avg_price
             if self.stop == 1:
                 self.dataloger = 'STOP TRADING BOT'
                 self.dataloger_enable = True
                 break
+        trading_info.status = "STOP"
+        self.trading_dict[cycle] = trading_info
         self.is_running = False
