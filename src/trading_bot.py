@@ -10,17 +10,18 @@ import os
 
 class TradingInfo():
     cycle = 0
-    symboy = ""
+    symbol = ""
+    Config_infor = ""
     total_buy = 0
     avg_price = 0
     status = "RUNNING"
     total = 0
     profit = 0
     roi = 0
-
+    action = ""
 
 class TradingBot():
-    def __init__(self, bot_info=BotInfo(),):
+    def __init__(self, bot_info=BotInfo(), ):
         self.bot_info = bot_info
         self.check_buy_step = float(0)
         self.is_track_buy = False
@@ -29,7 +30,8 @@ class TradingBot():
         self.avg_price = float(0)
         self.eth_price = float(0)
         self.pre_price = float(0)
-        self.binance_api = BinaceAPI(self.bot_info.binance_secret_key, self.bot_info.binance_api_key, self.bot_info.Testnet_url)
+        self.binance_api = BinaceAPI(self.bot_info.binance_secret_key, self.bot_info.binance_api_key,
+                                     self.bot_info.Testnet_url)
         self.stop = 0
         self.is_running = False
         self.dataloger = 'START TRADING BOT'
@@ -38,6 +40,7 @@ class TradingBot():
         self.is_first = True
         self.old_amount_buy = 0
 
+        self.trading_info = TradingInfo()
         self.cycle_num = 0
         self.trading_dict = {}
 
@@ -50,7 +53,10 @@ class TradingBot():
         print("test_oder: {}".format(test_oder))
         status = self.binance_api.trade_order_market(test_oder, symbol, "BUY", float(quantity))
         if status == True:
-            self.dataloger = "{} - SUCCESS --> BotVolume Binance -- action: BUY --amount:{} --Price:{} --status: success at {}".format(symbol, quantity, price, self.get_time())
+            self.trading_info.total_buy += quantity
+            self.trading_dict[self.cycle_num] = self.trading_info
+            self.dataloger = "{} - SUCCESS --> BotVolume Binance -- action: BUY --amount:{} --Price:{} --status: success at {}".format(
+                symbol, quantity, price, self.get_time())
             self.dataloger_enable = True
             self.old_amount_buy = quantity
         return status
@@ -79,20 +85,20 @@ class TradingBot():
     def check_buy(self, price):
         try:
             amount_buy = 0
-            if(self.lowest_price == 0):
+            if (self.lowest_price == 0):
                 self.lowest_price = price
-            
+
             # check decrease value percent (step 1)
-            if(float(price) < float(self.lowest_price)):
+            if (float(price) < float(self.lowest_price)):
                 decrease_percent_dca = float(((self.lowest_price - price) / price) * 100)
                 if (float(decrease_percent_dca) >= float(self.bot_info.decrease_percent_dca)):
                     self.lowest_price = price
                     self.is_track_buy = True
             # check increase value percent after decrease before (step 2)
-            if(self.is_track_buy == True):
-                if(float(price) > float(self.lowest_price)):
+            if (self.is_track_buy == True):
+                if (float(price) > float(self.lowest_price)):
                     increase_percent_dca = ((price - self.lowest_price) / self.lowest_price) * 100
-                    if(float(increase_percent_dca) >= float(self.bot_info.increase_percent_dca)):
+                    if (float(increase_percent_dca) >= float(self.bot_info.increase_percent_dca)):
                         amount_buy = float(self.bot_info.multiple_amount_buy_dca) * float(self.old_amount_buy)
                         if (amount_buy > float(self.bot_info.max_amount_buy)):
                             amount_buy = float(self.bot_info.max_amount_buy)
@@ -107,20 +113,21 @@ class TradingBot():
     def check_sell(self, price):
         try:
             quantity_per_sell = 0
-            #check current value greater than old max price
-            if(float(price) > float(self.eth_price)):
+            # check current value greater than old max price
+            if (float(price) > float(self.eth_price)):
                 self.eth_price = price
-            
-            if(float(price) > float(self.avg_price)):
+
+            if (float(price) > float(self.avg_price)):
                 increase_profit_percent_to_sell = float(((price - float(self.avg_price)) / float(self.avg_price)) * 100)
                 # tracking_condition
                 if float(increase_profit_percent_to_sell) >= float(self.bot_info.increase_profit_percent_to_sell):
                     self.is_track_sell = True
 
                 if self.is_track_sell == True:
-                    if(float(price) < float(self.eth_price)): # if market inverse price
+                    if (float(price) < float(self.eth_price)):  # if market inverse price
                         decrease_profit_percent_to_sell = ((self.eth_price - price) / price) * 100
-                        if(float(decrease_profit_percent_to_sell) >= float(self.bot_info.decrease_profit_percent_to_sell)):
+                        if (float(decrease_profit_percent_to_sell) >= float(
+                                self.bot_info.decrease_profit_percent_to_sell)):
                             quantity_per_sell = float(self.bot_info.quantity_per_sell)
                             self.is_track_sell = False
         except Exception as e:
@@ -144,20 +151,25 @@ class TradingBot():
         #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         #     print(exc_type, fname, exc_tb.tb_lineno)
 
-    def run(self,):
+    def run(self, ):
         self.is_running = True
         checking_cnt = 60
         self.dataloger = 'START TRADING BOT'
         self.dataloger_enable = True
 
-        trading_info = TradingInfo()
-        cycle_num += 1
+        self.trading_info = TradingInfo()
+        self.cycle_num += 1
 
-        trading_info.cycle = cycle
-        trading_info.status = "RUNNING"
-        self.trading_dict[cycle] = trading_info
-        
+        self.trading_info.cycle = self.cycle_num
+        self.trading_info.status = "RUNNING"
+        self.trading_info.symbol = self.bot_info.symbol
+        self.trading_dict[self.cycle_num] = self.trading_info
+
         while True:
+            if self.stop == 1:
+                self.dataloger = 'STOP TRADING BOT'
+                self.dataloger_enable = True
+                break
             URL = URLConfiguration('./config/bot_config.ini')
             getURL = URL.load_url()
             symbol = self.bot_info.symbol
@@ -165,7 +177,7 @@ class TradingBot():
                 value = self.binance_api.get_price(getURL.get_price, symbol)
                 price = float(value['price'])
                 print("[Real Time]: * symbol = {} - price = {}".format(symbol, price))
-                
+
                 # check first trading
                 if (self.is_first == True):
                     self.first_trading(getURL, symbol, price)
@@ -173,18 +185,16 @@ class TradingBot():
 
                 # check buy
                 quantity = float(self.check_buy(float(price)))
-                if(float(quantity) > 0):
+                if (float(quantity) > 0):
                     self.do_buy(getURL.test_oder, symbol, float(price), quantity)
-                    trading_info.total_buy += quantity
-                    self.trading_dict[self.cycle_num] = trading_info
-                
-                # check sell        
+
+                # check sell
                 quantity = float(self.check_sell(float(price)))
-                if(float(quantity) > 0):
+                if (float(quantity) > 0):
                     self.do_sell(getURL.test_oder, symbol, price, quantity)
 
                 checking_cnt += 1
-                if(checking_cnt >= 60):
+                if (checking_cnt >= 60):
                     checking_cnt = 0
                     balances = self.binance_api.account_infor(getURL.acc_infor)["balances"]
                     USDT_total = 0
@@ -202,11 +212,8 @@ class TradingBot():
                 pass
             pass
             time.sleep(1)
-            trading_info.avg_price = self.avg_price
-            if self.stop == 1:
-                self.dataloger = 'STOP TRADING BOT'
-                self.dataloger_enable = True
-                break
-        trading_info.status = "STOP"
-        self.trading_dict[cycle] = trading_info
+            self.trading_info.avg_price = self.avg_price
+
+        self.trading_info.status = "STOP"
+        self.trading_dict[self.cycle_num] = self.trading_info
         self.is_running = False

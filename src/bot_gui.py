@@ -9,7 +9,7 @@ import configparser
 from trading_bot import *
 from threading import Thread
 import time
-
+from PIL import Image, ImageTk
 class BOTGUI(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
@@ -31,7 +31,7 @@ class BOTGUI(Frame):
         self.max_amount_buy = tk.StringVar()
         self.increase_profit_percent_to_sell = tk.StringVar()
         self.decrease_profit_percent_to_sell = tk.StringVar()
-
+        self.tree = ttk.Treeview()
         # logger
         self.logLine = 0
 
@@ -44,12 +44,19 @@ class BOTGUI(Frame):
     def runWindown(self):
         self.parent.title("Bot Trading")
         self.pack(anchor="e")
-        
+
         top_frame = Frame(self)
         top_frame.grid(row=0, column=0, pady=5, padx=5)
-
-        config_frame = Frame(top_frame)
-        config_frame.grid(row=0, column=0, pady=5, padx=5,sticky=W)
+        load = Image.open('./image/logo.png')
+        ######## logo
+        img = load.resize((50, 50), )
+        render = ImageTk.PhotoImage(img, )
+        img = Label(top_frame, image=render)
+        img.image = render
+        img.grid(row=0, column=0, padx=5, pady=5, sticky=W)
+        ########
+        config_frame = Frame(top_frame, relief='raised')
+        config_frame.grid(row=1, column=0, pady=5, padx=5, sticky=W)
 
         sumary = [ 'Sumary:\n',
                     '\n+ Bot will start and do first buy only if price if <== {}\n',
@@ -61,7 +68,7 @@ class BOTGUI(Frame):
 
 
         sumary_frame = Frame(top_frame,)
-        sumary_frame.grid(row=0, column=1, pady=5, padx=5)
+        sumary_frame.grid(row=1, column=1, pady=5, padx=5)
         Showlog =Text(sumary_frame, width=30, height=30, wrap='word')
         Showlog.grid(row=0, column=0,)
         for i in range(len(sumary)):
@@ -72,7 +79,7 @@ class BOTGUI(Frame):
         # lable first buy price
         lb = Label(config_frame, text='price <= (usd)').grid(row=0, column=1,sticky=W)
         lb = Label(config_frame, text='       ').grid(row=0, column=2, sticky=W)
-        
+
         # lable amount first buy
         lb = Label(config_frame, text='Amount buy at 1st').grid(row=0, column=3, sticky=W)
         lb = Label(config_frame, text='       ').grid(row=0, column=4, sticky=W)
@@ -87,7 +94,7 @@ class BOTGUI(Frame):
         entry = Entry(config_frame, width=30, textvariable=self.first_buy_quantity)
         entry.grid(row=1, column=3, pady=5,sticky=W)
         entry.insert(0, self.bot_info.first_buy_quantity)
-        
+
         #label dca
         lb = Label(config_frame, text='step 1: price decrease (%)').grid(row=2, column=1,sticky=W)
         lb = Label(config_frame, text='step 2: and price up (%)').grid(row=2, column=3,sticky=W)
@@ -127,7 +134,7 @@ class BOTGUI(Frame):
         entry = Entry(config_frame, width=30, textvariable=self.APIkey)
         entry.grid(row=9, column=1, pady=10, sticky=W)
         entry.insert(0, self.bot_info.binance_api_key)
-        
+
         # Binance Secret Key
         lb = Label(config_frame, text='Binance Secret Key:').grid(row=10, column=0,sticky=W)
         entry = Entry(config_frame, width=30, textvariable=self.SecretKey)
@@ -167,40 +174,45 @@ class BOTGUI(Frame):
                    'config_info', 'total_buy', 'avg_price', 'status', 'total_sell', 'profit', 'ROI', 'action')
 
 
-        tree = ttk.Treeview(config_frame, columns=columns, show='headings')
-        tree['columns'] = ('cycle', 'current_bot',
+        self.tree = ttk.Treeview(config_frame, columns=columns, show='headings',)
+        self.tree['columns'] = ('cycle', 'current_bot',
                            'config_info', 'total_buy', 'avg_price', 'status', 'total_sell', 'profit', 'ROI', 'action')
 
 
         # format our column
-        tree.column("#0", width=10,  stretch=NO)
-        tree.column("cycle", anchor=CENTER, width=80)
-        tree.column("current_bot", anchor=CENTER, width=120)
-        tree.column("config_info", anchor=CENTER, width=120)
-        tree.column("total_buy", anchor=CENTER, width=80)
-        tree.column("avg_price", anchor=CENTER, width=80)
-        tree.column("status", anchor=CENTER, width=80)
-        tree.column("total_sell", anchor=CENTER, width=80)
-        tree.column("profit", anchor=CENTER, width=80)
-        tree.column("ROI", anchor=CENTER, width=80)
-        tree.column("action", anchor=CENTER, width=80)
+        self.tree.column("#0", width=10,  stretch=NO)
+        self.tree.column("cycle", anchor=CENTER, width=80)
+        self.tree.column("current_bot", anchor=CENTER, width=120)
+        self.tree.column("config_info", anchor=CENTER, width=120)
+        self.tree.column("total_buy", anchor=CENTER, width=80)
+        self.tree.column("avg_price", anchor=CENTER, width=80)
+        self.tree.column("status", anchor=CENTER, width=80)
+        self.tree.column("total_sell", anchor=CENTER, width=80)
+        self.tree.column("profit", anchor=CENTER, width=80)
+        self.tree.column("ROI", anchor=CENTER, width=80)
+        self.tree.column("action", anchor=CENTER, width=80)
 
         #Create Headings
-        tree.heading("#0", text="", anchor=CENTER)
-        tree.heading("cycle", text="Cycle", anchor=CENTER)
-        tree.heading("current_bot", text="Current Bot", anchor=CENTER)
-        tree.heading("config_info", text="Config info", anchor=CENTER)
-        tree.heading("total_buy", text="total BUY", anchor=CENTER)
-        tree.heading("avg_price", text="Avg Price", anchor=CENTER)
-        tree.heading("status", text="status", anchor=CENTER)
-        tree.heading("total_sell", text="total", anchor=CENTER)
-        tree.heading("profit", text="profit", anchor=CENTER)
-        tree.heading("ROI", text="ROI", anchor=CENTER)
-        tree.heading("action", text="action", anchor=CENTER)
+        self.tree.heading("#0", text="", anchor=CENTER)
+        self.tree.heading("cycle", text="Cycle", anchor=CENTER)
+        self.tree.heading("current_bot", text="Current Bot", anchor=CENTER)
+        self.tree.heading("config_info", text="Config info", anchor=CENTER)
+        self.tree.heading("total_buy", text="total BUY", anchor=CENTER)
+        self.tree.heading("avg_price", text="Avg Price", anchor=CENTER)
+        self.tree.heading("status", text="status", anchor=CENTER)
+        self.tree.heading("total_sell", text="total", anchor=CENTER)
+        self.tree.heading("profit", text="profit", anchor=CENTER)
+        self.tree.heading("ROI", text="ROI", anchor=CENTER)
+        self.tree.heading("action", text="action", anchor=CENTER)
 
+        #### scrollBarTree
+        scrollBar = Scrollbar(config_frame, command=self.tree.yview)
+        self.tree['yscrollcommand'] = scrollBar.set
+        scrollBar.grid(row=11, column=6,sticky=[ E,NS])
+        scrollBar.config(command=self.tree.yview)
         # tree.insert(parent='', index='end', iid=0, text='',
         #                values=('1', 'Ninja', '101', 'Oklahoma', 'Moore'))
-        tree.grid(row=11, column=0, padx=0, pady=1,columnspan=6)
+        self.tree.grid(row=11, column=0, padx=0, pady=1, columnspan=6)
 
         #
         log_frame = Frame(self)
@@ -213,7 +225,20 @@ class BOTGUI(Frame):
         self.ShowLog['yscrollcommand'] = scrollBar.set
         scrollBar.grid(column=1, row=1,sticky=[NS, E])
 
-        bt = Button(log_frame, text='Clear Log').grid(row=2, column=1, sticky=SE)
+        bt = Button(log_frame, text='Clear Log', command=self.clear_All_data).grid(row=2, column=1, sticky=SE)
+
+
+
+    def TalbeTradingInfor(self):
+        for key in self.trading_bot.trading_dict:
+            trading_infor = self.trading_bot.trading_dict[key]
+            if self.tree.exists(str(key)) == True:
+                self.tree.item(item=str(key),
+                               values=(trading_infor.cycle, trading_infor.symbol, trading_infor.Config_infor, trading_infor.total_buy, trading_infor.avg_price, trading_infor.status, trading_infor.total, trading_infor.profit, trading_infor.roi, trading_infor.action))
+            else:
+                self.tree.insert(parent='', index='end', text='',iid=str(key),
+                               values=(trading_infor.cycle, trading_infor.symbol,trading_infor.Config_infor, trading_infor.total_buy, trading_infor.avg_price, trading_infor.status, trading_infor.total, trading_infor.profit, trading_infor.roi, trading_infor.action))
+
 
     def Logdata(self):
         if self.trading_bot.dataloger_enable :
@@ -257,18 +282,20 @@ class BOTGUI(Frame):
     def action_stop(self):
         print("stop BOT")
         self.trading_bot.stop = True
+        print(self.trading_bot.stop)
 
 
 def log_task(app):
     while(1):
         app.Logdata()
+        app.TalbeTradingInfor()
         time.sleep(1)
-
 if __name__ == '__main__':
     root = Tk()
     app = BOTGUI(root)
-    
+
     t2 = Thread(target=log_task, args=(app,))
+
     t2.start()
 
     app.mainloop()

@@ -1,0 +1,1 @@
+rsync -arvz  /home/tuannt/myJob/TTS/trading_bot/DCA-Robot root@159.223.32.167:/home/
