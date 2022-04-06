@@ -1,5 +1,5 @@
 from itertools import cycle
-from time import time
+from time import sleep, time
 from unittest import result
 from configuration import *
 from binance_api import *
@@ -152,11 +152,18 @@ class TradingBot():
         #     print(exc_type, fname, exc_tb.tb_lineno)
 
     def run(self, ):
+        self.update_config()
         self.is_running = True
         checking_cnt = 60
-        self.dataloger = 'START TRADING BOT'
-        self.dataloger_enable = True
-
+        if(self.check_account(self.bot_info.binance_secret_key, self.bot_info.binance_api_key)):
+            self.dataloger = 'START TRADING BOT - ACCOUNT INFORMATION IS VALID!'
+            self.dataloger_enable = True
+        else:
+            self.dataloger = 'STOP TRADING BOT - THERE IS SOMETHING WRONG WITH THE ACCOUNT INFORMATION!'
+            self.dataloger_enable = True
+            self.is_running = False
+            return 0
+        sleep(2)
         self.trading_info = TradingInfo()
         self.cycle_num += 1
 
@@ -165,13 +172,14 @@ class TradingBot():
         self.trading_info.symbol = self.bot_info.symbol
         self.trading_dict[self.cycle_num] = self.trading_info
 
+        URL = URLConfiguration('./config/bot_config.ini')
+        getURL = URL.load_url()
         while True:
             if self.stop == 1:
                 self.dataloger = 'STOP TRADING BOT'
                 self.dataloger_enable = True
                 break
-            URL = URLConfiguration('./config/bot_config.ini')
-            getURL = URL.load_url()
+            
             symbol = self.bot_info.symbol
             try:
                 value = self.binance_api.get_price(getURL.get_price, symbol)
@@ -217,3 +225,24 @@ class TradingBot():
         self.trading_info.status = "STOP"
         self.trading_dict[self.cycle_num] = self.trading_info
         self.is_running = False
+
+    def check_account(self, m_binance_secret_key, m_binance_api_key):
+        URL = URLConfiguration('./config/bot_config.ini')
+        getURL = URL.load_url()
+        m_binance_api = BinaceAPI(m_binance_secret_key, m_binance_api_key, self.bot_info.Testnet_url)
+        balances, status_code = m_binance_api.account_infor(getURL.acc_infor)
+        if(status_code == 200):
+            return True
+        print(balances)
+        print(status_code)
+
+        return False
+
+    def update_config(self):
+        self.binance_api = BinaceAPI(self.bot_info.binance_secret_key, self.bot_info.binance_api_key,
+                                     self.bot_info.Testnet_url)
+
+# bot_config = BotConfiguration('./config/bot_config.ini')
+# bot_info = bot_config.load()
+# trading_bot = TradingBot(bot_info)
+# trading_bot.check_account("abc", "123")

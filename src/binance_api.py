@@ -30,7 +30,7 @@ class BinaceAPI:
         }
         acc_infor = self.Testnet_url + collections
         respone = requests.get(acc_infor, headers=self.hearder, params=param)
-        return respone.json()
+        return respone.json(), respone.status_code;
 
     def get_price(self, collections, symbol):
         get_price = self.Testnet_url + collections

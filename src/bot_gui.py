@@ -153,6 +153,10 @@ class BOTGUI(Frame):
         entry.grid(row=10, column=3, pady=5, sticky=W)
         entry.insert(0, self.bot_info.symbol)
 
+        # Check Key
+        button_stop = Button(config_frame, text="Check Account", width=15, command=self.Check_key)
+        button_stop.grid(row=10, column=5, pady=5,sticky=W )
+
         # midd_frame = Frame(self)
         # midd_frame.grid(row=1, column=0, pady=5, padx=5, sticky=W)
         #
@@ -227,8 +231,13 @@ class BOTGUI(Frame):
 
         bt = Button(log_frame, text='Clear Log', command=self.clear_All_data).grid(row=2, column=1, sticky=SE)
 
-
-
+    def Check_key(self):
+        m_binance_api_key = self.APIkey.get()
+        m_binance_secret_key = self.SecretKey.get()
+        if(self.trading_bot.check_account(m_binance_secret_key, m_binance_api_key)):
+            messagebox.showinfo('Check Account', 'Success!')
+        else:
+            messagebox.showerror('Check Account', 'Something went wrong!')
     def TalbeTradingInfor(self):
         for key in self.trading_bot.trading_dict:
             trading_infor = self.trading_bot.trading_dict[key]
@@ -275,6 +284,7 @@ class BOTGUI(Frame):
         if(self.trading_bot.is_running == False):
             self.trading_bot.stop = False
             self.trading_bot.is_first = True
+            self.trading_bot.update_config()
             t1 = Thread(target=self.trading_bot.run)
             t1.setDaemon(True)
             t1.start()
@@ -289,7 +299,7 @@ def log_task(app):
     while(1):
         app.Logdata()
         app.TalbeTradingInfor()
-        time.sleep(1)
+        time.sleep(0.5)
 if __name__ == '__main__':
     root = Tk()
     app = BOTGUI(root)
