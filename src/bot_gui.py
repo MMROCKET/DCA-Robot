@@ -77,7 +77,7 @@ class BOTGUI(Frame):
         Showlog.config(state=DISABLED)
 
         # lable first buy price
-        lb = Label(config_frame, text='price <= (usd)').grid(row=0, column=1,sticky=W)
+        lb = Label(config_frame, text='Price <= (usd)').grid(row=0, column=1,sticky=W)
         lb = Label(config_frame, text='       ').grid(row=0, column=2, sticky=W)
 
         # lable amount first buy
@@ -96,9 +96,9 @@ class BOTGUI(Frame):
         entry.insert(0, self.bot_info.first_buy_quantity)
 
         #label dca
-        lb = Label(config_frame, text='step 1: price decrease (%)').grid(row=2, column=1,sticky=W)
-        lb = Label(config_frame, text='step 2: and price up (%)').grid(row=2, column=3,sticky=W)
-        lb = Label(config_frame, text='multiple amount to buy').grid(row=2, column=5,sticky=W)
+        lb = Label(config_frame, text='Step 1: price decrease (%)').grid(row=2, column=1,sticky=W)
+        lb = Label(config_frame, text='Step 2: and price up (%)').grid(row=2, column=3,sticky=W)
+        lb = Label(config_frame, text='Multiple amount to buy').grid(row=2, column=5,sticky=W)
 
         # DCA
         lb = Label(config_frame, text='DCA when').grid(row=3, column=0,sticky=W)
@@ -119,8 +119,8 @@ class BOTGUI(Frame):
         entry.insert(0, self.bot_info.max_amount_buy)
 
         #sell
-        lb = Label(config_frame, text='step 1: price increase (%)').grid(row=6, column=1,sticky=W)
-        lb = Label(config_frame, text='step 2: and price down (%)').grid(row=6, column=3,sticky=W)
+        lb = Label(config_frame, text='Step 1: price increase (%)').grid(row=6, column=1,sticky=W)
+        lb = Label(config_frame, text='Step 2: and price down (%)').grid(row=6, column=3,sticky=W)
         lb = Label(config_frame, text='Sell When').grid(row=7, column=0,sticky=W)
         entry = Entry(config_frame, width=30, textvariable=self.increase_profit_percent_to_sell)
         entry.grid(row=7, column=1, pady=5,sticky=W)
@@ -186,10 +186,10 @@ class BOTGUI(Frame):
         # format our column
         self.tree.column("#0", width=10,  stretch=NO)
         self.tree.column("cycle", anchor=CENTER, width=80)
-        self.tree.column("current_bot", anchor=CENTER, width=120)
-        self.tree.column("config_info", anchor=CENTER, width=120)
-        self.tree.column("total_buy", anchor=CENTER, width=80)
-        self.tree.column("avg_price", anchor=CENTER, width=80)
+        self.tree.column("current_bot", anchor=CENTER, width=100)
+        self.tree.column("config_info", anchor=CENTER, width=80)
+        self.tree.column("total_buy", anchor=CENTER, width=100)
+        self.tree.column("avg_price", anchor=CENTER, width=100)
         self.tree.column("status", anchor=CENTER, width=80)
         self.tree.column("total_sell", anchor=CENTER, width=80)
         self.tree.column("profit", anchor=CENTER, width=80)
@@ -198,16 +198,16 @@ class BOTGUI(Frame):
 
         #Create Headings
         self.tree.heading("#0", text="", anchor=CENTER)
-        self.tree.heading("cycle", text="Cycle", anchor=CENTER)
-        self.tree.heading("current_bot", text="Current Bot", anchor=CENTER)
-        self.tree.heading("config_info", text="Config info", anchor=CENTER)
-        self.tree.heading("total_buy", text="total BUY", anchor=CENTER)
-        self.tree.heading("avg_price", text="Avg Price", anchor=CENTER)
-        self.tree.heading("status", text="status", anchor=CENTER)
-        self.tree.heading("total_sell", text="total", anchor=CENTER)
-        self.tree.heading("profit", text="profit", anchor=CENTER)
+        self.tree.heading("cycle", text="CYCLE", anchor=CENTER)
+        self.tree.heading("current_bot", text="CURRENT BOT", anchor=CENTER)
+        self.tree.heading("config_info", text="CONFIG INFO", anchor=CENTER)
+        self.tree.heading("total_buy", text="TOTAL BUY", anchor=CENTER)
+        self.tree.heading("avg_price", text="AVG PRICE", anchor=CENTER)
+        self.tree.heading("status", text="STATUS", anchor=CENTER)
+        self.tree.heading("total_sell", text="TOTAL", anchor=CENTER)
+        self.tree.heading("profit", text="PROFIT", anchor=CENTER)
         self.tree.heading("ROI", text="ROI", anchor=CENTER)
-        self.tree.heading("action", text="action", anchor=CENTER)
+        self.tree.heading("action", text="ACTION", anchor=CENTER)
 
         #### scrollBarTree
         scrollBar = Scrollbar(config_frame, command=self.tree.yview)
