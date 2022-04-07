@@ -48,3 +48,18 @@ This Bot will help you auto trade BUY/SELL to make volume easily
 - [x] Web App SaaS Version
 - [ ] Windown version
 - [ ] MacOS version - Coming Soon
+
+## 4. Pancake Bot - Order Book For Decentralize Exchange
+This Bot will help you trading with PancakeSwap look like a CEX
+
+### Supported currency
+- Any token have listing on PancakeSwap
+
+### Features
+- [ ] Order Book with Step-Limit
+- [ ] Auto Detect Event Bot - Detect a buy or sell and do an action buy or sell directly
+- [ ] Price Targeting - Drive you chart follow the target price
+
+### Supported OS
+- [ ] Windown version
+- [ ] MacOS version - Coming Soon
