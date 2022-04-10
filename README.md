@@ -1,7 +1,6 @@
 # [MMRocket](https://mmrocket.com/) Robot With ML &amp; AI
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/MMRocket1?style=social)](https://twitter.com/MMRocket1)
-[![Telegrame]](https://twitter.com/MMRocket1)
 
 ## 1. ML & AI
 - We use trading data around the world to forecast how the price wil to be
