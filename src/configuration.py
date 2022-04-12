@@ -22,7 +22,6 @@ class configfile():
 
 
 class URL():
-    Testnet_url = ""
     acc_infor = ""
     get_price = ""
     Order = ""
@@ -38,7 +37,6 @@ class URLConfiguration():
     def load_url(self):
         config = configparser.ConfigParser()
         config.read(self.path_file)
-        self.url_info.Testnet_url = config['URL']['Testnet_url']
         self.url_info.acc_infor = config['URL']['acc_infor']
         self.url_info.get_price = config['URL']['get_price']
         self.url_info.Order = config['URL']['Order']
@@ -49,13 +47,14 @@ class URLConfiguration():
 
 # configBot
 
-
 class BotInfo():
     id = 0
     binance_secret_key = ""
     binance_api_key = ""
 
-    Testnet_url = ""
+    testnet_url = ""
+    mainnet_url = ""
+    api_url = ""
     symbol = ""
 
     first_buy_price = 0
@@ -72,12 +71,13 @@ class BotInfo():
     quantity_per_sell = 0
     profit = 0
 
+    flag_URl = True
+
 
 class BotConfiguration():
     def __init__(self, path):
         self.path_file = path
         self.bot_info = BotInfo()
-
     def load(self):
         try:
             config = configparser.ConfigParser()
@@ -86,8 +86,10 @@ class BotConfiguration():
             self.bot_info.binance_secret_key = config['ConfigBot']['binance_secret_key']
             self.bot_info.binance_api_key = config['ConfigBot']['binance_api_key']
             self.bot_info.symbol = config['ConfigBot']['symbol']
-            self.bot_info.Testnet_url = config['ConfigBot']['testnet_url']
-            # load condition
+            self.bot_info.testnet_url = config['ConfigBot']['testnet_url']
+            self.bot_info.mainnet_url = config['ConfigBot']['mainnet_url']
+            self.bot_info.api_url = config['ConfigBot']['api_url']
+            print(self.bot_info.testnet_url)
             self.bot_info.decrease_percent_dca = float(config['CONDITION']['decrease_percent_dca'])
             self.bot_info.increase_percent_dca = float(config['CONDITION']['increase_percent_dca'])
             self.bot_info.multiple_amount_buy_dca = float(config['CONDITION']['multiple_amount_buy_dca'])
@@ -107,14 +109,12 @@ class BotConfiguration():
     def save(self):
         try:
             print("BotConfiguration save config")
-
             config = configparser.ConfigParser()
             config.read(self.path_file)
-
+            config['ConfigBot']['api_url'] = self.bot_info.api_url
             config['ConfigBot']['binance_secret_key'] = self.bot_info.binance_secret_key
             config['ConfigBot']['binance_api_key'] = self.bot_info.binance_api_key
             config['ConfigBot']['symbol'] = self.bot_info.symbol
-            config['ConfigBot']['testnet_url'] = self.bot_info.Testnet_url
             config['CONDITION']['decrease_percent_dca'] = str(self.bot_info.decrease_percent_dca)
             config['CONDITION']['increase_percent_dca'] = str(self.bot_info.increase_percent_dca)
             config['CONDITION']['multiple_amount_buy_dca'] = str(self.bot_info.multiple_amount_buy_dca)
@@ -132,3 +132,4 @@ class BotConfiguration():
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print(exc_type, fname, exc_tb.tb_lineno)
+

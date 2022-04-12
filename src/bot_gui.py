@@ -17,7 +17,7 @@ class BOTGUI(Frame):
         self.SecretKey = tk.StringVar()
         self.Symbol = tk.StringVar()
         self.getName = tk.StringVar()
-        self.getURL = tk.StringVar()
+        # self.getURL = tk.StringVar()
         self.getMode = tk.StringVar()
         self.parent = parent
         self.start_count = 0
@@ -32,6 +32,7 @@ class BOTGUI(Frame):
         self.increase_profit_percent_to_sell = tk.StringVar()
         self.decrease_profit_percent_to_sell = tk.StringVar()
         self.tree = ttk.Treeview()
+        self.Combobox = ttk.Combobox()
         # logger
         self.logLine = 0
 
@@ -47,7 +48,7 @@ class BOTGUI(Frame):
 
         top_frame = Frame(self)
         top_frame.grid(row=0, column=0, pady=5, padx=5)
-        load = Image.open('./image/logo.png')
+        load = Image.open('config/logo.png')
         ######## logo
         img = load.resize((50, 50), )
         render = ImageTk.PhotoImage(img, )
@@ -56,19 +57,19 @@ class BOTGUI(Frame):
         img.grid(row=0, column=0, padx=5, pady=5, sticky=W)
         ########
         config_frame = Frame(top_frame, relief='raised')
-        config_frame.grid(row=1, column=0, pady=5, padx=5, sticky=W)
+        config_frame.grid(row=2, column=0, pady=5, padx=5, sticky=W)
 
         sumary = [ 'Sumary:\n',
-                    '\n+ Bot will start and do first buy only if price if <== {}\n',
-                    '\n+ Amount to Buy when start cycle is {}\n',
-                    '\n+ Bot will to strong BUY x {} amount when market price go down{}% and go up{}% after.If price is continuous go down.Bot will boy more to reach limited{}\n',
-                    '\n+ Bot only sell when market price up >= {} and go down >= {} than actual average price\n',
+                    '\n+ Bot will start and do first buy only if price if <== {}\n'.format(self.trading_bot.bot_info.first_buy_price),
+                    '\n+ Amount to Buy when start cycle is {}\n'.format(self.trading_bot.bot_info.first_buy_quantity),
+                    '\n+ Bot will to strong BUY x {} amount when market price go down {}% and go up {}% after.If price is continuous go down.Bot will boy more to reach limited {}\n'.format(self.trading_bot.bot_info.multiple_amount_buy_dca, self.trading_bot.bot_info.decrease_percent_dca, self.trading_bot.bot_info.increase_percent_dca, self.trading_bot.bot_info.max_amount_buy),
+                    '\n+ Bot only sell when market price up >= {} and go down >= {} than actual average price\n'.format(self.trading_bot.bot_info.increase_profit_percent_to_sell, self.trading_bot.bot_info.decrease_profit_percent_to_sell),
                     '\n+ So profit always >= 1 % forever!\n'
         ]
 
 
         sumary_frame = Frame(top_frame,)
-        sumary_frame.grid(row=1, column=1, pady=5, padx=5)
+        sumary_frame.grid(row=1, column=1, pady=5, padx=5,rowspan=2)
         Showlog =Text(sumary_frame, width=30, height=30, wrap='word')
         Showlog.grid(row=0, column=0,)
         for i in range(len(sumary)):
@@ -129,33 +130,39 @@ class BOTGUI(Frame):
         entry.grid(row=7, column=3, pady=7,sticky=W)
         entry.insert(0, self.bot_info.decrease_profit_percent_to_sell)
 
+        new_frame = Frame(top_frame)
+        new_frame.grid(row=1, column=0,sticky=W)
+
         # Binance API Key
-        lb = Label(config_frame, text='Binance API Key:').grid(row=9, column=0,sticky=W)
-        entry = Entry(config_frame, width=30, textvariable=self.APIkey)
-        entry.grid(row=9, column=1, pady=10, sticky=W)
+        lb = Label(new_frame, text='Binance API Key:').grid(row=0, column=0,sticky=W)
+        entry = Entry(new_frame, width=30, textvariable=self.APIkey)
+        entry.grid(row=0, column=1, pady=10, sticky=W)
         entry.insert(0, self.bot_info.binance_api_key)
+        lb = Label(new_frame, text='       ').grid(row=1, column=4, sticky=W)
 
         # Binance Secret Key
-        lb = Label(config_frame, text='Binance Secret Key:').grid(row=10, column=0,sticky=W)
-        entry = Entry(config_frame, width=30, textvariable=self.SecretKey)
-        entry.grid(row=10, column=1, pady=10, sticky=W)
+        lb = Label(new_frame, text='Binance Secret Key:').grid(row=1, column=0,sticky=W)
+        entry = Entry(new_frame, width=30, textvariable=self.SecretKey)
+        entry.grid(row=1, column=1, pady=10,)
         entry.insert(0, self.bot_info.binance_secret_key)
 
         # Binance URL
-        lb = Label(config_frame, text='URL:').grid(row=9, column=2 , sticky=W)
-        entry = Entry(config_frame, width=30, textvariable=self.getURL)
-        entry.grid(row=9, column=3, pady=5, sticky=W)
-        entry.insert(0, self.bot_info.Testnet_url)
-
+        lb = Label(new_frame, text='URL:').grid(row=0, column=2 ,)
+        self.Combobox = ttk.Combobox(new_frame, width=27,)
+        self.Combobox.grid(row=0, column=3, pady=5, )
+        self.Combobox['values'] = ('Testnet', 'Mainnet')
+        self.Combobox['state'] = 'readonly'
+        self.Combobox.current(0)
+        # self.Combobox.bind('<<ComboboxSelected>>', self.getURL)
         # Binance Symbol
-        lb = Label(config_frame, text='Symbol:').grid(row=10, column=2, sticky=W)
-        entry = Entry(config_frame, width=30, textvariable=self.Symbol)
-        entry.grid(row=10, column=3, pady=5, sticky=W)
+        lb = Label(new_frame, text='Symbol:').grid(row=1, column=2,)
+        entry = Entry(new_frame, width=30, textvariable=self.Symbol)
+        entry.grid(row=1, column=3, pady=5, sticky=W)
         entry.insert(0, self.bot_info.symbol)
 
         # Check Key
-        button_stop = Button(config_frame, text="Check Account", width=15, command=self.Check_key)
-        button_stop.grid(row=10, column=5, pady=5,sticky=W )
+        button_stop = Button(new_frame, text="Check Account", width=15, command=self.Check_key)
+        button_stop.grid(row=1, column=5, pady=5,sticky=W )
 
         # midd_frame = Frame(self)
         # midd_frame.grid(row=1, column=0, pady=5, padx=5, sticky=W)
@@ -175,19 +182,19 @@ class BOTGUI(Frame):
         total_columns = 10
 
         columns = ('cycle', 'current_bot',
-                   'config_info', 'total_buy', 'avg_price', 'status', 'total_sell', 'profit', 'ROI', 'action')
+                    'total_buy', 'avg_price', 'status', 'total_sell', 'profit', 'ROI', 'action')
 
 
         self.tree = ttk.Treeview(config_frame, columns=columns, show='headings',)
         self.tree['columns'] = ('cycle', 'current_bot',
-                           'config_info', 'total_buy', 'avg_price', 'status', 'total_sell', 'profit', 'ROI', 'action')
+                                'total_buy', 'avg_price', 'status', 'total_sell', 'profit', 'ROI', 'action')
 
 
         # format our column
         self.tree.column("#0", width=10,  stretch=NO)
         self.tree.column("cycle", anchor=CENTER, width=80)
         self.tree.column("current_bot", anchor=CENTER, width=100)
-        self.tree.column("config_info", anchor=CENTER, width=80)
+        # self.tree.column("config_info", anchor=CENTER, width=80)
         self.tree.column("total_buy", anchor=CENTER, width=100)
         self.tree.column("avg_price", anchor=CENTER, width=100)
         self.tree.column("status", anchor=CENTER, width=80)
@@ -200,7 +207,7 @@ class BOTGUI(Frame):
         self.tree.heading("#0", text="", anchor=CENTER)
         self.tree.heading("cycle", text="CYCLE", anchor=CENTER)
         self.tree.heading("current_bot", text="CURRENT BOT", anchor=CENTER)
-        self.tree.heading("config_info", text="CONFIG INFO", anchor=CENTER)
+        # self.tree.heading("config_info", text="CONFIG INFO", anchor=CENTER)
         self.tree.heading("total_buy", text="TOTAL BUY", anchor=CENTER)
         self.tree.heading("avg_price", text="AVG PRICE", anchor=CENTER)
         self.tree.heading("status", text="STATUS", anchor=CENTER)
@@ -231,9 +238,20 @@ class BOTGUI(Frame):
 
         bt = Button(log_frame, text='Clear Log', command=self.clear_All_data).grid(row=2, column=1, sticky=SE)
 
+    # def getURL(self):
+    #     if self.Combobox.get() == 'Testnet':
+    #         self.bot_info.flag_URl = True
+    #     else:
+    #         self.bot_info.flag_URl = False
     def Check_key(self):
         m_binance_api_key = self.APIkey.get()
         m_binance_secret_key = self.SecretKey.get()
+        if self.Combobox.get() == 'Mainnet':
+            self.trading_bot.bot_info.api_url = self.trading_bot.bot_info.mainnet_url
+            print(self.trading_bot.bot_info.api_url)
+        else:
+            self.trading_bot.bot_info.api_url = self.trading_bot.bot_info.testnet_url
+            print(self.trading_bot.bot_info.api_url)
         if(self.trading_bot.check_account(m_binance_secret_key, m_binance_api_key)):
             messagebox.showinfo('Check Account', 'Success!')
         else:
@@ -267,7 +285,13 @@ class BOTGUI(Frame):
         # save config
         self.trading_bot.bot_info.binance_api_key = self.APIkey.get()
         self.trading_bot.bot_info.binance_secret_key = self.SecretKey.get()
-        self.trading_bot.bot_info.Testnet_url = self.getURL.get()
+        print(self.Combobox.get())
+        if self.Combobox.get() == 'Mainnet':
+            self.trading_bot.bot_info.api_url = self.trading_bot.bot_info.mainnet_url
+            print(self.trading_bot.bot_info.api_url)
+        else:
+            self.trading_bot.bot_info.api_url = self.trading_bot.bot_info.testnet_url
+            print(self.trading_bot.bot_info.api_url)
         self.trading_bot.bot_info.symbol = self.Symbol.get()
         self.trading_bot.bot_info.first_buy_price = self.firstBuyPrice.get()
         self.trading_bot.bot_info.first_buy_quantity = self.first_buy_quantity.get()
@@ -280,7 +304,7 @@ class BOTGUI(Frame):
         self.trading_bot.save_config()
         # print("run BOT")
 
-        # print("SecretKey: {}".format(self.SecretKey.get()))
+        print("SecretKey: {}".format(self.SecretKey.get()))
         if(self.trading_bot.is_running == False):
             self.trading_bot.stop = False
             self.trading_bot.is_first = True
@@ -303,7 +327,7 @@ def log_task(app):
 if __name__ == '__main__':
     root = Tk()
     app = BOTGUI(root)
-
+    #
     t2 = Thread(target=log_task, args=(app,))
 
     t2.start()

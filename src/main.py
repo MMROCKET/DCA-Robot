@@ -2,9 +2,12 @@ from hashlib import new
 from trading_bot import *
 from configuration import *
 
-bot_config = BotConfiguration("./config/bot_config.ini")
-bot_info = bot_config.load()
+if __name__ == '__main__':
+    root = Tk()
+    app = BOTGUI(root)
 
-new_bot = TradingBot(bot_info)
+    t2 = Thread(target=log_task, args=(app,))
 
-new_bot.run()
+    t2.start()
+
+    app.mainloop()

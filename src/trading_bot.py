@@ -31,7 +31,7 @@ class TradingBot():
         self.eth_price = float(0)
         self.pre_price = float(0)
         self.binance_api = BinaceAPI(self.bot_info.binance_secret_key, self.bot_info.binance_api_key,
-                                     self.bot_info.Testnet_url)
+                                     self.bot_info.api_url)
         self.stop = 0
         self.is_running = False
         self.dataloger = 'START TRADING BOT'
@@ -156,10 +156,10 @@ class TradingBot():
         self.is_running = True
         checking_cnt = 60
         if(self.check_account(self.bot_info.binance_secret_key, self.bot_info.binance_api_key)):
-            self.dataloger = 'START TRADING BOT - ACCOUNT INFORMATION IS VALID!'
+            self.dataloger = 'START TRADING BOT - ACCOUNT INFORMATION IS VALID! ---- ' + self.bot_info.api_url
             self.dataloger_enable = True
         else:
-            self.dataloger = 'STOP TRADING BOT - THERE IS SOMETHING WRONG WITH THE ACCOUNT INFORMATION!'
+            self.dataloger = 'STOP TRADING BOT - THERE IS SOMETHING WRONG WITH THE ACCOUNT INFORMATION! ---- ' + self.bot_info.api_url
             self.dataloger_enable = True
             self.is_running = False
             return 0
@@ -229,7 +229,8 @@ class TradingBot():
     def check_account(self, m_binance_secret_key, m_binance_api_key):
         URL = URLConfiguration('./config/bot_config.ini')
         getURL = URL.load_url()
-        m_binance_api = BinaceAPI(m_binance_secret_key, m_binance_api_key, self.bot_info.Testnet_url)
+        m_binance_api = BinaceAPI(m_binance_secret_key, m_binance_api_key, self.bot_info.api_url)
+        print(self.bot_info.api_url)
         balances, status_code = m_binance_api.account_infor(getURL.acc_infor)
         if(status_code == 200):
             return True
@@ -240,7 +241,7 @@ class TradingBot():
 
     def update_config(self):
         self.binance_api = BinaceAPI(self.bot_info.binance_secret_key, self.bot_info.binance_api_key,
-                                     self.bot_info.Testnet_url)
+                                     self.bot_info.api_url)
 
 # bot_config = BotConfiguration('./config/bot_config.ini')
 # bot_info = bot_config.load()
