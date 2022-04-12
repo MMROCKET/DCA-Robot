@@ -1,5 +1,7 @@
 # [MMRocket](https://mmrocket.com/) Robot With ML &amp; AI
 
+[![Twitter Follow](https://img.shields.io/twitter/follow/MMRocket1?style=social)](https://twitter.com/MMRocket1)
+
 ## 1. ML & AI
 - We use trading data around the world to forecast how the price wil to be
 - It not 100% true but it will help us make decission as well
@@ -46,5 +48,20 @@ This Bot will help you auto trade BUY/SELL to make volume easily
 
 ### Supported OS
 - [x] Web App SaaS Version
+- [ ] Windown version
+- [ ] MacOS version - Coming Soon
+
+## 4. Pancake Bot - Order Book For Decentralize Exchange
+This Bot will help you trading with PancakeSwap look like a CEX
+
+### Supported currency
+- Any token have listing on PancakeSwap
+
+### Features
+- [ ] Order Book with Step-Limit
+- [ ] Auto Detect Event Bot - Detect a buy or sell and do an action buy or sell directly
+- [ ] Price Targeting - Drive you chart follow the target price
+
+### Supported OS
 - [ ] Windown version
 - [ ] MacOS version - Coming Soon
