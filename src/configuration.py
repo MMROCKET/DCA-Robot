@@ -1,7 +1,7 @@
 import configparser
 import os
 import sys
-
+import ast
 
 class configfile():
     def __init__(self, path):
@@ -27,7 +27,7 @@ class URL():
     Order = ""
     test_oder = ""
     all_oder = ""
-
+    exchange_info = ""
 
 class URLConfiguration():
     def __init__(self, path):
@@ -42,6 +42,7 @@ class URLConfiguration():
         self.url_info.Order = config['URL']['Order']
         self.url_info.test_oder = config['URL']['test_oder']
         self.url_info.all_oder = config['URL']['all_oder']
+        self.url_info.exchange_info = config['URL']['exchange_info']
         return self.url_info
 
 
@@ -56,6 +57,7 @@ class BotInfo():
     mainnet_url = ""
     api_url = ""
     symbol = ""
+    list_symbol_select = []
 
     first_buy_price = 0
     first_buy_quantity = 0
@@ -86,10 +88,11 @@ class BotConfiguration():
             self.bot_info.binance_secret_key = config['ConfigBot']['binance_secret_key']
             self.bot_info.binance_api_key = config['ConfigBot']['binance_api_key']
             self.bot_info.symbol = config['ConfigBot']['symbol']
+            self.bot_info.list_symbol_select = config['ConfigBot']['list_symbol_select'].split(',')
+            print(self.bot_info.list_symbol_select)
             self.bot_info.testnet_url = config['ConfigBot']['testnet_url']
             self.bot_info.mainnet_url = config['ConfigBot']['mainnet_url']
             self.bot_info.api_url = config['ConfigBot']['api_url']
-            print(self.bot_info.testnet_url)
             self.bot_info.decrease_percent_dca = float(config['CONDITION']['decrease_percent_dca'])
             self.bot_info.increase_percent_dca = float(config['CONDITION']['increase_percent_dca'])
             self.bot_info.multiple_amount_buy_dca = float(config['CONDITION']['multiple_amount_buy_dca'])

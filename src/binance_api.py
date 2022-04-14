@@ -71,3 +71,14 @@ class BinaceAPI:
         if respone.status_code == 200:
             return True
         return respone
+
+    def exchange_info(self, collections, symbol):
+        get_price = self.Testnet_url + collections
+        print(get_price)
+
+        respone = requests.get(get_price, headers=self.hearder, params={
+            'symbol': str(symbol)}, )
+        status = False
+        if respone.status_code == 200:
+            status = True
+        return status, respone.json()

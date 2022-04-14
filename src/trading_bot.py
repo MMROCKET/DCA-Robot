@@ -1,6 +1,7 @@
 from itertools import cycle
 from time import sleep, time
 from unittest import result
+from urllib import response
 from configuration import *
 from binance_api import *
 import time
@@ -242,8 +243,24 @@ class TradingBot():
     def update_config(self):
         self.binance_api = BinaceAPI(self.bot_info.binance_secret_key, self.bot_info.binance_api_key,
                                      self.bot_info.api_url)
+    
+    def decode_symbol(self, symbol):
+        URL = URLConfiguration('./config/bot_config.ini')
+        getURL = URL.load_url()
+        status, response = self.binance_api.exchange_info(getURL.exchange_info, symbol)
+        base_asset = ""
+        quote_asset = ""
+        if(status == True):
+            base_asset = response["symbols"][0]["baseAsset"]
+            quote_asset = response["symbols"][0]["quoteAsset"]
+        return base_asset, quote_asset
 
 # bot_config = BotConfiguration('./config/bot_config.ini')
 # bot_info = bot_config.load()
+# bot_config.save()
+# print(bot_info.list_symbol_select)
 # trading_bot = TradingBot(bot_info)
-# trading_bot.check_account("abc", "123")
+# # trading_bot.check_account("abc", "123")
+
+# # status, response = trading_bot.binance_api.exchange_info(getURL.exchange_info, bot_info.symbol)
+# print(trading_bot.decode_symbol(bot_info.symbol))

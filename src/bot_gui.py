@@ -33,6 +33,7 @@ class BOTGUI(Frame):
         self.decrease_profit_percent_to_sell = tk.StringVar()
         self.tree = ttk.Treeview()
         self.Combobox = ttk.Combobox()
+        self.cbb_symbol = ttk.Combobox()
         # logger
         self.logLine = 0
 
@@ -59,9 +60,14 @@ class BOTGUI(Frame):
         config_frame = Frame(top_frame, relief='raised')
         config_frame.grid(row=2, column=0, pady=5, padx=5, sticky=W)
 
+        base_asset = ""
+        quote_asset = ""
+        base_asset, quote_asset = self.trading_bot.decode_symbol(
+            self.bot_info.symbol)
+
         sumary = [ 'Sumary:\n',
-                    '\n+ Bot will start and do first buy only if price if <== {}\n'.format(self.trading_bot.bot_info.first_buy_price),
-                    '\n+ Amount to Buy when start cycle is {}\n'.format(self.trading_bot.bot_info.first_buy_quantity),
+                    '\n+ Bot will start and do first buy only if price if <== {} {}\n'.format(self.trading_bot.bot_info.first_buy_price, quote_asset),
+                    '\n+ Amount to Buy when start cycle is {} {}\n'.format(self.trading_bot.bot_info.first_buy_quantity, base_asset),
                     '\n+ Bot will to strong BUY x {} amount when market price go down {}% and go up {}% after.If price is continuous go down.Bot will boy more to reach limited {}\n'.format(self.trading_bot.bot_info.multiple_amount_buy_dca, self.trading_bot.bot_info.decrease_percent_dca, self.trading_bot.bot_info.increase_percent_dca, self.trading_bot.bot_info.max_amount_buy),
                     '\n+ Bot only sell when market price up >= {} and go down >= {} than actual average price\n'.format(self.trading_bot.bot_info.increase_profit_percent_to_sell, self.trading_bot.bot_info.decrease_profit_percent_to_sell),
                     '\n+ So profit always >= 1 % forever!\n'
@@ -78,11 +84,11 @@ class BOTGUI(Frame):
         Showlog.config(state=DISABLED)
 
         # lable first buy price
-        lb = Label(config_frame, text='Price <= (usd)').grid(row=0, column=1,sticky=W)
+        lb = Label(config_frame, text='Price <= (' + quote_asset + ')').grid(row=0, column=1,sticky=W)
         lb = Label(config_frame, text='       ').grid(row=0, column=2, sticky=W)
 
         # lable amount first buy
-        lb = Label(config_frame, text='Amount buy at 1st').grid(row=0, column=3, sticky=W)
+        lb = Label(config_frame, text='Amount buy at 1st (' + base_asset + ')').grid(row=0, column=3, sticky=W)
         lb = Label(config_frame, text='       ').grid(row=0, column=4, sticky=W)
 
         # entry first buy price
@@ -156,9 +162,15 @@ class BOTGUI(Frame):
         # self.Combobox.bind('<<ComboboxSelected>>', self.getURL)
         # Binance Symbol
         lb = Label(new_frame, text='Symbol:').grid(row=1, column=2,)
-        entry = Entry(new_frame, width=30, textvariable=self.Symbol)
-        entry.grid(row=1, column=3, pady=5, sticky=W)
-        entry.insert(0, self.bot_info.symbol)
+        # entry = Entry(new_frame, width=30, textvariable=self.Symbol)
+        # entry.grid(row=1, column=3, pady=5, sticky=W)
+        # entry.insert(0, self.bot_info.symbol)
+
+        self.cbb_symbol = ttk.Combobox(new_frame, width=27,)
+        self.cbb_symbol.grid(row=1, column=3, pady=5, )
+        self.cbb_symbol['values'] = self.bot_info.list_symbol_select
+        self.cbb_symbol['state'] = 'readonly'
+        self.cbb_symbol.current(0)
 
         # Check Key
         button_stop = Button(new_frame, text="Check Account", width=15, command=self.Check_key)
@@ -292,7 +304,7 @@ class BOTGUI(Frame):
         else:
             self.trading_bot.bot_info.api_url = self.trading_bot.bot_info.testnet_url
             print(self.trading_bot.bot_info.api_url)
-        self.trading_bot.bot_info.symbol = self.Symbol.get()
+        self.trading_bot.bot_info.symbol = self.cbb_symbol.get()
         self.trading_bot.bot_info.first_buy_price = self.firstBuyPrice.get()
         self.trading_bot.bot_info.first_buy_quantity = self.first_buy_quantity.get()
         self.trading_bot.bot_info.decrease_percent_dca = self.decrease_percent_dca.get()
