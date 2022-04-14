@@ -103,7 +103,6 @@ class TradingBot():
                         if (amount_buy > float(self.bot_info.max_amount_buy)):
                             amount_buy = float(self.bot_info.max_amount_buy)
                         self.is_track_buy = False
-                        self.avg_price = (self.avg_price + price) / 2
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -194,7 +193,8 @@ class TradingBot():
                 # check buy
                 quantity = float(self.check_buy(float(price)))
                 if (float(quantity) > 0):
-                    self.do_buy(getURL.test_oder, symbol, float(price), quantity)
+                    if(self.do_buy(getURL.test_oder, symbol, float(price), quantity) == True):
+                        self.avg_price = (self.avg_price + price) / 2
 
                 # check sell
                 quantity = float(self.check_sell(float(price)))
