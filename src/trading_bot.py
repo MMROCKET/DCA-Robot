@@ -56,7 +56,7 @@ class TradingBot():
         if status == True:
             self.trading_info.total_buy += quantity
             self.trading_dict[self.cycle_num] = self.trading_info
-            self.dataloger = "{} - SUCCESS --> BotVolume Binance -- action: BUY --amount:{} --Price:{} --status: success at {}".format(
+            self.dataloger = "{} - SUCCESS --> DCA_BOT Binance -- action: BUY --amount:{} --Price:{} --status: success at {}".format(
                 symbol, quantity, price, self.get_time())
             self.dataloger_enable = True
             self.old_amount_buy = quantity
@@ -67,7 +67,7 @@ class TradingBot():
         self.lowest_price = price
         status = self.binance_api.trade_order_market(getURL.test_oder, symbol, "SELL", quantity)
         if status == True:
-            self.dataloger = "{} - SUCCESS --> BotVolume Binance -- action: SELL --amount:{} --Price:{} --status: success   at {}".format(
+            self.dataloger = "{} - SUCCESS --> DCA_BOT Binance -- action: SELL --amount:{} --Price:{} --status: success   at {}".format(
                 symbol, quantity, price, self.get_time())
             self.dataloger_enable = True
             self.eth_price = price
