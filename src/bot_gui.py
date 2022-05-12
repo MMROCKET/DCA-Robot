@@ -273,10 +273,10 @@ class BOTGUI(Frame):
             trading_infor = self.trading_bot.trading_dict[key]
             if self.tree.exists(str(key)) == True:
                 self.tree.item(item=str(key),
-                               values=(trading_infor.cycle, trading_infor.symbol, trading_infor.Config_infor, trading_infor.total_buy, trading_infor.avg_price, trading_infor.status, trading_infor.total, trading_infor.profit, trading_infor.roi, trading_infor.action))
+                               values=(trading_infor.cycle, trading_infor.symbol, trading_infor.total_buy, trading_infor.avg_price, trading_infor.status, trading_infor.total, trading_infor.profit, trading_infor.roi, trading_infor.action))
             else:
                 self.tree.insert(parent='', index='end', text='',iid=str(key),
-                               values=(trading_infor.cycle, trading_infor.symbol,trading_infor.Config_infor, trading_infor.total_buy, trading_infor.avg_price, trading_infor.status, trading_infor.total, trading_infor.profit, trading_infor.roi, trading_infor.action))
+                               values=(trading_infor.cycle, trading_infor.symbol, trading_infor.total_buy, trading_infor.avg_price, trading_infor.status, trading_infor.total, trading_infor.profit, trading_infor.roi, trading_infor.action))
 
 
     def Logdata(self):

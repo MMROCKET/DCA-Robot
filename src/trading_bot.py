@@ -195,7 +195,7 @@ class TradingBot():
                 quantity = float(self.check_buy(float(price)))
                 if (float(quantity) > 0):
                     if(self.do_buy(getURL.test_oder, symbol, float(price), quantity) == True):
-                        self.avg_price = (self.avg_price + price) / 2
+                        self.avg_price = (self.avg_price + (price * float(self.bot_info.multiple_amount_buy_dca))) / (1 + float(self.bot_info.multiple_amount_buy_dca))
 
                 # check sell
                 quantity = float(self.check_sell(float(price)))
