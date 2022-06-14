@@ -62,10 +62,10 @@ class TradingBot():
             self.old_amount_buy = quantity
         return status
 
-    def do_sell(self, getURL, symbol, price, quantity):
-        print("[SELL} : * symbol = {} - price = {}".format(symbol, price))
+    def do_sell(self, test_oder, symbol, price, quantity):
+        print("[SELL] : * symbol = {} - price = {}".format(symbol, price))
         self.lowest_price = price
-        status = self.binance_api.trade_order_market(getURL.test_oder, symbol, "SELL", quantity)
+        status = self.binance_api.trade_order_market(test_oder, symbol, "SELL", quantity)
         if status == True:
             self.dataloger = "{} - SUCCESS --> DCA_BOT Binance -- action: SELL --amount:{} --Price:{} --status: success   at {}".format(
                 symbol, quantity, price, self.get_time())
@@ -125,7 +125,7 @@ class TradingBot():
 
                 if self.is_track_sell == True:
                     if (float(price) < float(self.eth_price)):  # if market inverse price
-                        decrease_profit_percent_to_sell = ((self.eth_price - price) / price) * 100
+                        decrease_profit_percent_to_sell = ((self.eth_price - price) / self.eth_price) * 100
                         if (float(decrease_profit_percent_to_sell) >= float(
                                 self.bot_info.decrease_profit_percent_to_sell)):
                             quantity_per_sell = float(self.bot_info.quantity_per_sell)
@@ -205,9 +205,9 @@ class TradingBot():
                 checking_cnt += 1
                 if (checking_cnt >= 60):
                     checking_cnt = 0
-                    balances = self.binance_api.account_infor(getURL.acc_infor)["balances"]
-                    USDT_total = 0
-                    BTC_total = 0
+                    # balances = self.binance_api.account_infor(getURL.acc_infor)["balances"]
+                    # USDT_total = 0
+                    # BTC_total = 0
                     # for balance in balances:
                     #     if(balance["asset"] == "USDT"):
                     #         USDT_total = balance["free"]
